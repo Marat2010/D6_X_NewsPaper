@@ -2,11 +2,16 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User, Group
+from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect
+from django.template.loader import render_to_string
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, FormView
 from .forms import RegisterForm, LoginForm
 from news.models import Category
+from django.conf import settings
+
+DEFAULT_FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
 
 
 class RegisterView(CreateView):
@@ -64,10 +69,33 @@ def subscribe_to(request, pk):
 
     if not category.subscribers.filter(pk=user.id).exists():
         category.subscribers.add(user)
-        # print('===22===', category.subscribers.all())
+        email = user.email
+        html = render_to_string(
+            'mail/subscribe.html',
+            {
+                'category': category,
+                'user': user
+            },
+        )
+        msg = EmailMultiAlternatives(
+            subject=f'Вы подписались на категорию {category}',
+            body='',
+            from_email=DEFAULT_FROM_EMAIL,
+            to=[email, ],
+        )
 
+        msg.attach_alternative(html, 'text/html')
+
+        try:
+            msg.send()
+        except Exception as e:
+            print(e)
+        # return redirect(request.META.get('HTTP_REFERER'))
+        return redirect('news:categories')
+
+    return redirect('news:categories')
     # return redirect('/news/categories')
-    return redirect(request.META.get('HTTP_REFERER'))
+    # return redirect(request.META.get('HTTP_REFERER'))
 
 
 @login_required()
@@ -77,6 +105,6 @@ def unsubscribe_from(request, pk):
     print('===11===', category)
     if category.subscribers.filter(id=user.id).exists():
         category.subscribers.remove(user)
-    # return redirect('/news/categories')
-    return redirect(request.META.get('HTTP_REFERER'))
+    return redirect('news:categories')
+    # return redirect(request.META.get('HTTP_REFERER'))
 
