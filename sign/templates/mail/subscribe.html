@@ -8,9 +8,16 @@
 <h1 align="center">Новостной портал NewsPort</h1>
 <hr>
 <h3>Уважаемый {{ user.username }}</h3>
-<p>Вы подписались на рассылку новостей и статей из категории: {{ category.name }}!</p>
+{#<p>Вы подписались на рассылку новостей и статей из категории: {{ category.name }}!</p>#}
+{#<a href="http://127.0.0.1:8000{% url 'news:category_detail' category.pk %}">Статьи из раздела</a>#}
+
+<p>
+    Вы подписались на рассылку новостей и статей из категории:
+    <button class="btn btn-primary btn-lg">
+    <a href="http://127.0.0.1:8000{% url 'news:category_detail' category.pk %}"> {{ category.name }} !!!</a>
+    </button>
+</p>
 <hr>
-<a href="http://127.0.0.1:8000{% url 'news:category_detail' category.pk %}">Статьи из раздела</a>
 
 </body>
 </html>

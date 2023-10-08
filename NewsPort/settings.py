@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.flatpages',
     'django_filters',
+    'django_apscheduler',
 
     'allauth',
     'allauth.account',
@@ -58,7 +59,7 @@ INSTALLED_APPS = [
     #########
     # User apps
     #########
-    'news',
+    'news.apps.NewsConfig',
     'sign',
 ]
 

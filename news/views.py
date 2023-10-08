@@ -9,6 +9,8 @@ from django.views.generic import ListView, UpdateView, CreateView, DetailView, D
 from .models import Post, Category
 from .filters import PostFilter
 from .forms import PostForm
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class PostsList(ListView):
@@ -115,3 +117,30 @@ class CategoryDetailView(ListView):
         context['is_not_authors'] = not self.request.user.groups.filter(name='authors').exists()
         return context
 
+
+# -------------------------------
+# class Category2DetailView(ListView):
+#     model = Post
+#     template_name = 'news/posts.html'
+#     context_object_name = 'posts'
+#     ordering = ['-id']
+#     paginate_by = 3
+#
+#     def get_queryset(self):
+#         self.id = resolve(self.request.path_info).kwargs['pk']
+#         print("==1 =====", self.id)
+#         print("== 1.1 =====", self.kwargs['pk'])
+#
+#         cat = Category.objects.get(pk=self.kwargs['pk'])
+#         queryset = cat.post_set.order_by('-pk')
+#         return queryset
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         print("==2 =====", self.id)
+#         print("== 2.2 =====", self.kwargs['pk'])
+#         context['category'] = Category.objects.get(pk=self.kwargs['pk'])
+#         context['time_now'] = timezone.localtime(timezone.now())  # добавим переменную текущей даты time_now
+#         context['is_not_authors'] = not self.request.user.groups.filter(name='authors').exists()
+#         return context
+# -------------------------------
