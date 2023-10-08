@@ -185,5 +185,14 @@ EMAIL_USE_SSL = True  # Яндекс использует ssl, включать 
 # DEFAULT_FROM_EMAIL = 'admin@NewsPort.ru'
 # DEFAULT_FROM_EMAIL = 'marat2017.s@ya.ru'
 DEFAULT_FROM_EMAIL = 'marat2017.s@yandex.ru'
+SERVER_EMAIL = 'marat2017.s@yandex.ru'
 
+# ADMINS = [
+#     ('Marat', 'marat2017.s@yandex.ru'),
+#     # список всех админов в формате ('имя', 'их почта')
+# ]
+
+# MANAGERS = [
+#     ('smg_2006', 'smg_2006@list.ru'),
+# ]
 

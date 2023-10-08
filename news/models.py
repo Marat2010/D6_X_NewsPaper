@@ -25,10 +25,8 @@ class Author(models.Model):
         for post in posts:
             commentPostRow = post.comment_set.all().aggregate(cpRating=Sum('rating'))
             commentPostRat += commentPostRow.get('cpRating')
-
         self.ratingAuthor = pRat * 3 + cRat + commentPostRat
         # -------------------------------
-
         self.save()
 
 
@@ -38,6 +36,9 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return f'/news/categories/{self.pk}'
 
 
 class Post(models.Model):
@@ -63,7 +64,7 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
-        return f'/news/{self.id}'
+        return f'/news/{self.pk}'
 
     def like(self):
         self.rating += 1

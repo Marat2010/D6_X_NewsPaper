@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, FormView
 from .forms import RegisterForm, LoginForm
-from news.models import Category
+from news.models import Category, Author
 from django.conf import settings
 
 DEFAULT_FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
@@ -54,10 +54,10 @@ class LogoutView(LoginRequiredMixin, TemplateView):
 @login_required
 def upgrade_to_author(request):
     user = request.user
-    print("=== 0 user.groups ==:", user.groups.all())
     authors_group = Group.objects.get(name='authors')
     if not request.user.groups.filter(name='authors').exists():
         authors_group.user_set.add(user)
+        Author.objects.create(authorUser=user)
     return redirect('/news')
 
 
