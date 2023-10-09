@@ -1,6 +1,10 @@
 from time import timezone
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.mail import EmailMultiAlternatives
+from django.shortcuts import redirect
+from django.template.loader import render_to_string
 
 from django.urls import reverse_lazy, resolve
 from django.utils import timezone
@@ -11,6 +15,9 @@ from .filters import PostFilter
 from .forms import PostForm
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings
+
+DEFAULT_FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
 
 
 class PostsList(ListView):
@@ -103,6 +110,7 @@ class CategoryDetailView(ListView):
     template_name = 'news/posts.html'
     context_object_name = 'posts'
     ordering = ['-id']
+    # ordering = ['-dateCreation']
     paginate_by = 3
 
     def get_queryset(self):
@@ -116,6 +124,54 @@ class CategoryDetailView(ListView):
         context['time_now'] = timezone.localtime(timezone.now())  # добавим переменную текущей даты time_now
         context['is_not_authors'] = not self.request.user.groups.filter(name='authors').exists()
         return context
+
+
+@login_required()
+def subscribe_to(request, pk):
+    user = request.user
+    category = Category.objects.get(pk=pk)
+
+    if not category.subscribers.filter(pk=user.id).exists():
+        category.subscribers.add(user)
+        email = user.email
+        html = render_to_string(
+            'mail/subscribe.html',
+            {
+                'category': category,
+                'user': user
+            },
+        )
+        msg = EmailMultiAlternatives(
+            subject=f'Вы подписались на категорию {category}',
+            body='',
+            from_email=DEFAULT_FROM_EMAIL,
+            to=[email, ],
+        )
+
+        msg.attach_alternative(html, 'text/html')
+
+        try:
+            msg.send()
+        except Exception as e:
+            print(e)
+        # return redirect(request.META.get('HTTP_REFERER'))
+        return redirect('news:categories')
+
+    return redirect(request.META.get('HTTP_REFERER'))
+    # return redirect('news:categories')
+
+
+@login_required()
+def unsubscribe_from(request, pk):
+    user = request.user
+    category = Category.objects.get(pk=pk)
+    print('===11===', category)
+    if category.subscribers.filter(id=user.id).exists():
+        category.subscribers.remove(user)
+    return redirect('news:categories')
+    # return redirect(request.META.get('HTTP_REFERER'))
+
+
 
 
 # -------------------------------

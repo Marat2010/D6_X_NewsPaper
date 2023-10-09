@@ -16,11 +16,7 @@
             <div class="w-30 p-2 col-sm-4" style="width: 300px">
                 <div class="card">
                     <div class="card-body">
-                        {#                        <h5 class="card-title">{{ category.name }} </h5>#}
-{#                        <button type="button" class="btn btn-primary btn-lg">#}
-                            <a href="{% url 'news:category_detail' category.pk %}" class="btn btn-primary btn-lg">{{ category.name }}</a>
-{#                            {{ category.name }}#}
-{#                        </button>#}
+                        <a href="{% url 'news:category_detail' category.pk %}" class="btn btn-primary btn-lg">{{ category.name }}</a>
                         {% if user in category.subscribers.filter %}
                             <button type="button" class="btn btn-info btn-sm" disabled>Вы подписаны</button>
                         {% endif %}
@@ -31,9 +27,9 @@
                         <a href="{% url 'news:category_detail' category.pk %}" class="btn btn-info">Статьи</a>
 
                         {% if user not in category.subscribers.filter %}
-                            <a href="{% url 'sign:subscribe' category.pk %}" class="btn btn-primary btn-sm">Подписаться</a>
+                            <a href="{% url 'news:subscribe' category.pk %}" class="btn btn-primary btn-sm">Подписаться</a>
                         {% else %}
-                            <a href="{% url 'sign:unsubscribe' category.pk %}" class="btn btn-secondary btn-sm">Отписаться</a>
+                            <a href="{% url 'news:unsubscribe' category.pk %}" class="btn btn-secondary btn-sm">Отписаться</a>
                         {% endif %}
                     </div>
                 </div>

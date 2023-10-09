@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-syw_nlsvwd$se70p1v5(vk*t4+#@a6-*__@b4az$qp1k__p)jj'
+# SECRET_KEY = 'django-insecure-syw_nlsvwd$se70p1v5(vk*t4+#@a6-*__@b4az$qp1k__p)jj'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -174,18 +176,17 @@ ACCOUNT_FORMS = {'signup': 'sign.forms.BasicSignupForm'}
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
 
-
 EMAIL_HOST = 'smtp.yandex.ru'  # адрес сервера Яндекс-почты для всех один и тот же
 EMAIL_PORT = 465  # порт smtp сервера тоже одинаковый
-EMAIL_HOST_USER = 'marat2017.s'  # ваше имя пользователя, например если ваша почта user@yandex.ru,
-# то сюда надо писать user, иными словами, это всё то что идёт до собаки
-EMAIL_HOST_PASSWORD = '0510Ya2023'  # пароль от почты
+
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # ваше имя пользователя, это всё то что идёт до собаки
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # пароль от почты
+
 EMAIL_USE_SSL = True  # Яндекс использует ssl, включать его здесь обязательно
 
-# DEFAULT_FROM_EMAIL = 'admin@NewsPort.ru'
-# DEFAULT_FROM_EMAIL = 'marat2017.s@ya.ru'
-DEFAULT_FROM_EMAIL = 'marat2017.s@yandex.ru'
-SERVER_EMAIL = 'marat2017.s@yandex.ru'
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+
+SERVER_EMAIL = config('SERVER_EMAIL')
 
 # ADMINS = [
 #     ('Marat', 'marat2017.s@yandex.ru'),
@@ -195,4 +196,11 @@ SERVER_EMAIL = 'marat2017.s@yandex.ru'
 # MANAGERS = [
 #     ('smg_2006', 'smg_2006@list.ru'),
 # ]
+
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+
+
+if DEBUG:     # Включить для эмуляции отправки почты
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

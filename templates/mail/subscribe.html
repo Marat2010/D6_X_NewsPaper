@@ -12,10 +12,12 @@
 {#<a href="http://127.0.0.1:8000{% url 'news:category_detail' category.pk %}">Статьи из раздела</a>#}
 
 <p>
+    <strong>
     Вы подписались на рассылку новостей и статей из категории:
-    <button class="btn btn-primary btn-lg">
-    <a href="http://127.0.0.1:8000{% url 'news:category_detail' category.pk %}"> {{ category.name }} !!!</a>
-    </button>
+    <a href="http://127.0.0.1:8000{% url 'news:category_detail' category.pk %}" class="btn btn-primary btn-lg">
+     {{ category.name }} !!!
+     </a>
+    </strong>
 </p>
 <hr>
 

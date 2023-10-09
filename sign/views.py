@@ -2,13 +2,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User, Group
-from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect
-from django.template.loader import render_to_string
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, FormView
 from .forms import RegisterForm, LoginForm
-from news.models import Category, Author
+from news.models import Author
 from django.conf import settings
 
 DEFAULT_FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
@@ -56,55 +54,9 @@ def upgrade_to_author(request):
     user = request.user
     authors_group = Group.objects.get(name='authors')
     if not request.user.groups.filter(name='authors').exists():
-        authors_group.user_set.add(user)
         Author.objects.create(authorUser=user)
+        authors_group.user_set.add(user)
     return redirect('/news')
 
 
-@login_required()
-def subscribe_to(request, pk):
-    user = request.user
-    category = Category.objects.get(pk=pk)
-    # print('===11===', category)
-
-    if not category.subscribers.filter(pk=user.id).exists():
-        category.subscribers.add(user)
-        email = user.email
-        html = render_to_string(
-            'mail/subscribe.html',
-            {
-                'category': category,
-                'user': user
-            },
-        )
-        msg = EmailMultiAlternatives(
-            subject=f'Вы подписались на категорию {category}',
-            body='',
-            from_email=DEFAULT_FROM_EMAIL,
-            to=[email, ],
-        )
-
-        msg.attach_alternative(html, 'text/html')
-
-        try:
-            msg.send()
-        except Exception as e:
-            print(e)
-        # return redirect(request.META.get('HTTP_REFERER'))
-        return redirect('news:categories')
-
-    return redirect('news:categories')
-    # return redirect('/news/categories')
-    # return redirect(request.META.get('HTTP_REFERER'))
-
-
-@login_required()
-def unsubscribe_from(request, pk):
-    user = request.user
-    category = Category.objects.get(pk=pk)
-    print('===11===', category)
-    if category.subscribers.filter(id=user.id).exists():
-        category.subscribers.remove(user)
-    return redirect('news:categories')
-    # return redirect(request.META.get('HTTP_REFERER'))
 

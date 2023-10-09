@@ -12,9 +12,9 @@
 {% block content %}
     {% if category %}
         {% if user not in category.subscribers.filter %}
-            <a href="{% url 'sign:subscribe' category.pk %}" class="btn btn-primary">Подписаться</a>
+            <a href="{% url 'news:subscribe' category.pk %}" class="btn btn-primary">Подписаться</a>
         {% else %}
-            <a href="{% url 'sign:unsubscribe' category.pk %}" class="btn btn-secondary btn-sm">Отписаться</a>
+            <a href="{% url 'news:unsubscribe' category.pk %}" class="btn btn-secondary btn-sm">Отписаться</a>
         {% endif %}
 
         <h1 align="center" >Новости и статьи категории `{{ category.name }}`:</h1>

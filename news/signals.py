@@ -1,21 +1,12 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver  # импортируем нужный декоратор
-from django.core.mail import mail_managers
-from .models import Post
+from .models import Post, PostCategory
+from .tasks import new_post_subscription
 
 
-# в декоратор передаётся первым аргументом сигнал, на который будет реагировать эта функция,
-# и в отправители надо передать также модель
-@receiver(post_save, sender=Post)
-def notify_managers_appointment(sender, instance, created, **kwargs):
-    if created:
-        print("===11== ", instance.__dict__)
-        subject = f'{instance.title} {instance.dateCreation.strftime("%d %m %Y")}'
-    else:
-        subject = f'Appointment changed for {instance.title} {instance.dateCreation.strftime("%d %m %Y")}'
-
-    mail_managers(
-        subject=subject,
-        message=instance.text,
-    )
+@receiver(m2m_changed, sender=PostCategory)
+def notify_subscribers(sender, instance, **kwargs):
+    print("===kwargs-===", kwargs)
+    if kwargs['action'] == 'post_add':
+        new_post_subscription(instance)
 
